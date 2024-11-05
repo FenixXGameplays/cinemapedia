@@ -1,12 +1,10 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/helpers/human_format.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:intl/intl.dart';
 
 import '../../../domain/entities/movie.dart';
 
-class MovieHorizontalListview extends StatelessWidget {
+class MovieHorizontalListview extends StatefulWidget {
   final List<Movie> movies;
   final String? label;
   final String? date;
@@ -21,21 +19,47 @@ class MovieHorizontalListview extends StatelessWidget {
   });
 
   @override
+  State<MovieHorizontalListview> createState() => _MovieHorizontalListviewState();
+}
+
+class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
+
+  final scrollController = ScrollController();
+
+@override
+  void initState() {
+    scrollController.addListener((){
+      if(widget.loadNextPage == null) return;
+
+      if((scrollController.position.pixels + 200) >= scrollController.position.maxScrollExtent){
+        widget.loadNextPage!();
+      }
+    });
+    super.initState();
+  }
+
+@override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 350,
       child: Column(
         children: [
-          if (label != null && date != null)
-            _TitleHorizontal(label: label, date: date),
+          
+          _TitleHorizontal(label: widget.label, date: widget.date),
           Expanded(
               child: ListView.builder(
-                //controller: scrollController,
-                itemCount: movies.length,
+                controller: scrollController,
+                itemCount: widget.movies.length,
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return FadeInRight(child: _Slide(movie: movies[index]));
+                  return FadeInRight(child: _Slide(movie: widget.movies[index]));
                 },
               )
             )
