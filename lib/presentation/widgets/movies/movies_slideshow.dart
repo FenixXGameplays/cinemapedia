@@ -1,6 +1,8 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:card_swiper/card_swiper.dart';
+import 'package:cinemapedia/config/router/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../domain/entities/movie.dart';
 
@@ -21,13 +23,17 @@ class MoviesSlideshow extends StatelessWidget {
         pagination: SwiperPagination(
           margin: const EdgeInsets.only(top: 0),
           builder: DotSwiperPaginationBuilder(
-            activeColor: colors.primary,
-            color: colors.secondary.withOpacity(0.6),
-            size: 8
-          ),
+              activeColor: colors.primary,
+              color: colors.secondary.withOpacity(0.6),
+              size: 8),
         ),
         itemCount: movies.length,
-        itemBuilder: (context, index) => _Slide(movie: movies[index]),
+        itemBuilder: (context, index) => GestureDetector(
+          child: _Slide(movie: movies[index]),
+          onTap: (){
+            context.push('/movie-screen/${movies[index].id}');
+          },
+        ),
       ),
     );
   }

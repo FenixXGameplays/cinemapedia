@@ -1,6 +1,8 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/helpers/human_format.dart';
+import 'package:cinemapedia/config/router/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../domain/entities/movie.dart';
 
@@ -19,26 +21,27 @@ class MovieHorizontalListview extends StatefulWidget {
   });
 
   @override
-  State<MovieHorizontalListview> createState() => _MovieHorizontalListviewState();
+  State<MovieHorizontalListview> createState() =>
+      _MovieHorizontalListviewState();
 }
 
 class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
-
   final scrollController = ScrollController();
 
-@override
+  @override
   void initState() {
-    scrollController.addListener((){
-      if(widget.loadNextPage == null) return;
+    scrollController.addListener(() {
+      if (widget.loadNextPage == null) return;
 
-      if((scrollController.position.pixels + 200) >= scrollController.position.maxScrollExtent){
+      if ((scrollController.position.pixels + 200) >=
+          scrollController.position.maxScrollExtent) {
         widget.loadNextPage!();
       }
     });
     super.initState();
   }
 
-@override
+  @override
   void dispose() {
     scrollController.dispose();
     super.dispose();
@@ -50,19 +53,26 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
       height: 350,
       child: Column(
         children: [
-          
           _TitleHorizontal(label: widget.label, date: widget.date),
           Expanded(
               child: ListView.builder(
-                controller: scrollController,
-                itemCount: widget.movies.length,
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return FadeInRight(child: _Slide(movie: widget.movies[index]));
+            controller: scrollController,
+            itemCount: widget.movies.length,
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                child: FadeInRight(
+                  child: _Slide(
+                    movie: widget.movies[index],
+                  ),
+                ),
+                onTap: () {
+                  context.push('/movie-screen/${widget.movies[index].id}');
                 },
-              )
-            )
+              );
+            },
+          ))
         ],
       ),
     );
@@ -83,17 +93,29 @@ class _Slide extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _ImageHorizontal(movie: movie),
-          const SizedBox( height:  5),
-
+          const SizedBox(height: 5),
           _TitleMovie(movie: movie, titleStyle: titleStyle),
-
           Row(
             children: [
-              Icon(Icons.star_half_outlined, color: Colors.yellow.shade800,),
-              const SizedBox(width: 3,),
-              Text("${movie.voteAverage}", style: titleStyle.bodyMedium?.copyWith(color: Colors.yellow.shade800),),
-              const SizedBox(width: 10,),
-              Text(HumanFormat.numberFormatted(movie.popularity), style: titleStyle.bodySmall,)
+              Icon(
+                Icons.star_half_outlined,
+                color: Colors.yellow.shade800,
+              ),
+              const SizedBox(
+                width: 3,
+              ),
+              Text(
+                "${movie.voteAverage}",
+                style: titleStyle.bodyMedium
+                    ?.copyWith(color: Colors.yellow.shade800),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                HumanFormat.numberFormatted(movie.popularity),
+                style: titleStyle.bodySmall,
+              )
             ],
           )
         ],
@@ -116,9 +138,10 @@ class _TitleMovie extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 150,
-      child: Text(movie.title,
-      maxLines: 2,
-      style: titleStyle.titleSmall,
+      child: Text(
+        movie.title,
+        maxLines: 2,
+        style: titleStyle.titleSmall,
       ),
     );
   }
@@ -148,7 +171,7 @@ class _ImageHorizontal extends StatelessWidget {
                 child: CircularProgressIndicator.adaptive(),
               );
             }
-    
+
             return FadeIn(child: child);
           },
         ),
