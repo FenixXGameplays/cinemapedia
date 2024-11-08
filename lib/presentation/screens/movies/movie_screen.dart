@@ -1,8 +1,10 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/presentation/screens/providers/movies/similar_film_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/entities/movie.dart';
+import '../../widgets/widgets.dart';
 import '../providers/providers.dart';
 
 class MovieScreen extends ConsumerStatefulWidget {
@@ -22,6 +24,7 @@ class MovieScreenState extends ConsumerState<MovieScreen> {
     super.initState();
     ref.read(movieDetailProvider.notifier).loadMovie(widget.moveId);
     ref.read(actorsByMovieProvider.notifier).loadActors(widget.moveId);
+    ref.read(similarMoviesProvider.notifier).loadNextSimilars(widget.moveId);
   }
 
   @override
@@ -69,7 +72,33 @@ class _MovieDetails extends StatelessWidget {
         _ImageAndInfo(movie: movie, size: size, textStyles: textStyles),
         _Genres(movie: movie),
         _ActorsByMovie(movieId: movie.id.toString()),
+        _SimilarMovies(movieId: movie.id.toString()),
         const SizedBox(height: 10),
+      ],
+    );
+  }
+}
+
+class _SimilarMovies extends ConsumerWidget {
+
+  final String movieId;
+  const _SimilarMovies({required this.movieId});
+
+  @override
+  Widget build(BuildContext context, ref) {
+    final similarsByMovie = ref.watch(similarMoviesProvider)[movieId];
+
+    return Column(
+      children: [
+        //const _TitleHorizontal(label: "Similares", date: null,),
+
+        MovieHorizontalListview(
+                  movies: similarsByMovie!,
+                  label: 'Similares',
+                  loadNextPage: () => ref
+                      .read(similarMoviesProvider.notifier)
+                      .loadNextSimilars(movieId),
+                ),
       ],
     );
   }
@@ -286,6 +315,41 @@ class _GradientTopBottom extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+class _TitleHorizontal extends StatelessWidget {
+  final String? label;
+  final String? date;
+  const _TitleHorizontal({
+    required this.label,
+    required this.date,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.titleLarge;
+    return Container(
+      padding: const EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        children: [
+          if (label != null)
+            Text(
+              label!,
+              style: titleStyle,
+            ),
+          const Spacer(),
+          if (date != null)
+            FilledButton.tonal(
+              style: const ButtonStyle(visualDensity: VisualDensity.compact),
+              onPressed: () {},
+              child: Text(date!),
+            )
+        ],
       ),
     );
   }
