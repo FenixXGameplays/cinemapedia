@@ -104,7 +104,7 @@ class _Slide extends StatelessWidget {
                 width: 3,
               ),
               Text(
-                "${movie.voteAverage}",
+                HumanFormat.numberFormatted(movie.voteAverage,1),
                 style: titleStyle.bodyMedium
                     ?.copyWith(color: Colors.yellow.shade800),
               ),
@@ -112,7 +112,7 @@ class _Slide extends StatelessWidget {
                 width: 10,
               ),
               Text(
-                HumanFormat.numberFormatted(movie.popularity),
+                HumanFormat.numberFormatted(movie.popularity,0),
                 style: titleStyle.bodySmall,
               )
             ],

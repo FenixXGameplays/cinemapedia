@@ -11,4 +11,5 @@ abstract class MoviesDatasource {
 
   Future<Movie> getDetailsId(String id);
 
+  Future<List<Movie>> searchMovies(String query);
 }

@@ -1,7 +1,7 @@
-import 'package:cinemapedia/presentation/screens/providers/movies/similar_repository_provider.dart';
+import 'package:cinemapedia/presentation/providers/movies/similar_repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../domain/entities/movie.dart';
+import '../../../domain/entities/movie.dart';
 
 
 final similarMoviesProvider = StateNotifierProvider<SimilarFilmNotifier, Map<String, List<Movie>>>((ref) {

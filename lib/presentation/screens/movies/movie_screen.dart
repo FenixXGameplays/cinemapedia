@@ -1,11 +1,11 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:cinemapedia/presentation/screens/providers/movies/similar_film_provider.dart';
+import 'package:cinemapedia/presentation/providers/movies/similar_film_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/entities/movie.dart';
 import '../../widgets/widgets.dart';
-import '../providers/providers.dart';
+import '../../providers/providers.dart';
 
 class MovieScreen extends ConsumerStatefulWidget {
   static const routeName = 'movie-screen';
