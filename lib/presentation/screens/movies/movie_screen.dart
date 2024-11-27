@@ -80,7 +80,6 @@ class _MovieDetails extends StatelessWidget {
 }
 
 class _SimilarMovies extends ConsumerWidget {
-
   final String movieId;
   const _SimilarMovies({required this.movieId});
 
@@ -93,12 +92,12 @@ class _SimilarMovies extends ConsumerWidget {
         //const _TitleHorizontal(label: "Similares", date: null,),
 
         MovieHorizontalListview(
-                  movies: similarsByMovie!,
-                  label: 'Similares',
-                  loadNextPage: () => ref
-                      .read(similarMoviesProvider.notifier)
-                      .loadNextSimilars(movieId),
-                ),
+          movies: similarsByMovie!,
+          label: 'Similares',
+          loadNextPage: () => ref
+              .read(similarMoviesProvider.notifier)
+              .loadNextSimilars(movieId),
+        ),
       ],
     );
   }
@@ -132,8 +131,7 @@ class _ImageAndInfo extends StatelessWidget {
           const SizedBox(
             width: 10,
           ),
-          _TitleAndOverview(
-              size: size, movie: movie, textStyles: textStyles),
+          _TitleAndOverview(size: size, movie: movie, textStyles: textStyles),
         ],
       ),
     );
@@ -249,26 +247,59 @@ class _TitleAndOverview extends StatelessWidget {
   }
 }
 
-class _CustomSliverAppBar extends StatelessWidget {
+final isFavoriteProvider =
+    FutureProvider.family.autoDispose((ref, int movieId) {
+  final localStorageRepository = ref.watch(localStorageProvider);
+
+  return localStorageRepository.isMovieFavorite(movieId);
+});
+
+class _CustomSliverAppBar extends ConsumerWidget {
   final Movie movie;
-  const _CustomSliverAppBar({ required this.movie});
+  const _CustomSliverAppBar({required this.movie});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     final size = MediaQuery.sizeOf(context);
+    final isFavoriteFuture = ref.watch(isFavoriteProvider(movie.id));
     return SliverAppBar(
       backgroundColor: Colors.black,
       expandedHeight: size.height * 0.7,
       foregroundColor: Colors.white,
+      actions: [
+        IconButton(
+          onPressed: () async {
+            //ref.read(localStorageProvider).toggleFavorite(movie);
+            await ref.read(favoriteMovieProvider.notifier).toggleFavorite(movie);
+            ref.invalidate(isFavoriteProvider(movie.id));
+          },
+          icon: isFavoriteFuture.when(
+              data: (isFavorite) => isFavorite
+                  ? const Icon(
+                      Icons.favorite_rounded,
+                      color: Colors.red,
+                    )
+                  : const Icon(
+                      Icons.favorite_border_outlined,
+                      color: Colors.red,
+                    ),
+              loading: () => const CircularProgressIndicator.adaptive(),
+              error: (_, __) => throw UnimplementedError()),
+        )
+      ],
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         background: Stack(
           children: [
             SizedBox.expand(
-              child: Image.network(movie.posterPath, fit: BoxFit.cover, loadingBuilder: (context, child, loadingProgress) {
-                if(loadingProgress != null) return const SizedBox();
-                return FadeIn(child: child);
-              },),
+              child: Image.network(
+                movie.posterPath,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress != null) return const SizedBox();
+                  return FadeIn(child: child);
+                },
+              ),
             ),
             _GradientTopBottom(),
             _GradientTopLeft()
@@ -319,7 +350,6 @@ class _GradientTopBottom extends StatelessWidget {
     );
   }
 }
-
 
 class _TitleHorizontal extends StatelessWidget {
   final String? label;

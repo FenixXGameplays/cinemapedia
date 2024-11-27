@@ -1,4 +1,3 @@
-import 'package:cinemapedia/config/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,7 +9,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
     switch(location){
       case '/': return 0;
-      case '/categories': return 1;
+      case '/populares': return 1;
       case '/favorites': return 2;
       default: return 0;
     }
@@ -19,7 +18,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
   void onItemTab(BuildContext context, int index){
     switch(index){
       case 0: context.go('/');
-      //case 1: context.go('/categories');
+      case 1: context.go('/populares');
       case 2: context.go('/favorites');
     }
   }
@@ -36,8 +35,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
         label: "Home",
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.label_outline),
-        label: "Categories",
+        icon: Icon(Icons.thumbs_up_down_outlined),
+        label: "Populares",
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.favorite_border),
